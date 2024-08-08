@@ -1,7 +1,12 @@
-import React from 'react'
+"use client";
+
+import { useAppSelector } from "@/redux/store";
+import React from "react";
 
 export default function page() {
-  return (
-    <div>page</div>
-  )
+  const { currentUser } = useAppSelector((state) => state.user);
+
+  console.log(currentUser);
+
+  return <div>page</div>;
 }

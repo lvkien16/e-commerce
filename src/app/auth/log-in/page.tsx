@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, ChangeEvent, FormEvent } from "react";
+import { login } from "@/redux/user/userSlice";
+import { useAppDispatch } from "@/redux/store";
 
 interface FormData {
   email: string;
@@ -17,6 +19,7 @@ export default function LogInPage() {
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -47,6 +50,7 @@ export default function LogInPage() {
         setError("");
         setLoading(false);
         setFormData({ email: "", password: "" });
+        dispatch(login(data));
         router.push("/");
       }
     } catch (error) {

@@ -16,19 +16,22 @@ import {
   ShoppingCartIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-
-const navigation = [
-  { name: "Home", href: "/", current: true },
-  { name: "Products", href: "/products", current: false },
-  { name: "About", href: "/about-us", current: false },
-  { name: "Contact", href: "/contact", current: false },
-];
+import { usePathname } from "next/navigation";
 
 function classNames(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Header() {
+  const pathname = usePathname();
+
+  const navigation = [
+    { name: "Home", href: "/", current: pathname === "/" },
+    { name: "Products", href: "/products", current: pathname === "/products" },
+    { name: "About", href: "/about-us", current: pathname === "/about-us" },
+    { name: "Contact", href: "/contact", current: pathname === "/contact" },
+  ];
+
   return (
     <Disclosure
       as="nav"
