@@ -17,6 +17,9 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAppSelector } from "@/redux/store";
+import { logout } from "@/redux/user/userSlice";
+import { useAppDispatch } from "@/redux/store";
 
 function classNames(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ");
@@ -24,6 +27,8 @@ function classNames(...classes: (string | boolean | undefined)[]) {
 
 export default function Header() {
   const pathname = usePathname();
+  const { currentUser } = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
 
   const navigation = [
     { name: "Home", href: "/", current: pathname === "/" },
@@ -31,6 +36,23 @@ export default function Header() {
     { name: "About", href: "/about-us", current: pathname === "/about-us" },
     { name: "Contact", href: "/contact", current: pathname === "/contact" },
   ];
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/auth/logout", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.error(data.message);
+        return;
+      } else {
+        dispatch(logout());
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <Disclosure
@@ -111,53 +133,65 @@ export default function Header() {
             </Link>
 
             {/* Profile dropdown */}
-            <Link href="/auth/log-in">
-              <button className="border px-2 py-1 bg-primary text-white rounded-lg border-primary hover:bg-transparent hover:text-primary">
-                Log In
-              </button>
-            </Link>
-            {/* <Menu as="div" className="relative ml-3">
-              <div>
-                <MenuButton className="relative flex rounded-full bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary">
-                  <span className="absolute -inset-1.5" />
-                  <span className="sr-only">Open user menu</span>
-                  <img
-                    alt=""
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    className="h-8 w-8 rounded-full"
-                  />
-                </MenuButton>
-              </div>
-              <MenuItems
-                transition
-                className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-secondary py-1 shadow-lg ring-1 ring-primary ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
-              >
-                <MenuItem>
-                  <Link
-                    href="/profile"
-                    className="block px-4 py-2 text-sm text-primary data-[focus]:bg-primary data-[focus]:text-white"
-                  >
-                    Your Profile
-                  </Link>
-                </MenuItem>
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-primary data-[focus]:bg-primary data-[focus]:text-white"
-                  >
-                    Settings
-                  </a>
-                </MenuItem>
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-primary data-[focus]:bg-primary data-[focus]:text-white"
-                  >
-                    Sign out
-                  </a>
-                </MenuItem>
-              </MenuItems>
-            </Menu> */}
+            {!currentUser ? (
+              <Link href="/auth/log-in">
+                <button className="border px-2 py-1 bg-primary text-white rounded-lg border-primary hover:bg-transparent hover:text-primary">
+                  Log In
+                </button>
+              </Link>
+            ) : (
+              <Menu as="div" className="relative ml-3">
+                <div>
+                  <MenuButton className="relative flex rounded-full bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary">
+                    <span className="absolute -inset-1.5" />
+                    <span className="sr-only">Open user menu</span>
+                    {currentUser.profilePicture ? (
+                      <img
+                        src={currentUser.profilePicture}
+                        className="h-8 w-8 rounded-full"
+                        alt="avatar"
+                      />
+                    ) : (
+                      <img
+                        src="default-avatar.jpg"
+                        alt="avatar"
+                        className="h-8 w-8 rounded-full"
+                      />
+                    )}
+                  </MenuButton>
+                </div>
+                <MenuItems
+                  transition
+                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-secondary py-1 shadow-lg ring-1 ring-primary ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+                >
+                  <MenuItem>
+                    <Link
+                      href="/profile"
+                      className="block px-4 py-2 text-sm text-primary data-[focus]:bg-primary data-[focus]:text-white"
+                    >
+                      Your Profile
+                    </Link>
+                  </MenuItem>
+                  <MenuItem>
+                    <a
+                      href="#"
+                      className="block px-4 py-2 text-sm text-primary data-[focus]:bg-primary data-[focus]:text-white"
+                    >
+                      Settings
+                    </a>
+                  </MenuItem>
+                  <MenuItem>
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="w-full text-start block px-4 py-2 text-sm text-primary data-[focus]:bg-primary data-[focus]:text-white"
+                    >
+                      Log out
+                    </button>
+                  </MenuItem>
+                </MenuItems>
+              </Menu>
+            )}
           </div>
         </div>
       </div>
