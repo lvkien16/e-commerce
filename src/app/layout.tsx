@@ -21,7 +21,7 @@ export default function RootLayout({
       <html lang="en">
         <body className={inter.className}>
           <Header />
-          {children}
+          <div className="pt-16">{children}</div>
         </body>
       </html>
     </ReduxProvider>

@@ -57,7 +57,7 @@ export default function Header() {
   return (
     <Disclosure
       as="nav"
-      className="bg-secondary shadow-sm shadow-secondary px-4"
+      className="bg-secondary shadow-sm shadow-secondary px-4 fixed top-0 w-full z-50"
     >
       <div className="flex justify-center max-w-full px-2 md:px-6 lg:px-8">
         <div className="relative w-full flex h-16 items-center justify-between">

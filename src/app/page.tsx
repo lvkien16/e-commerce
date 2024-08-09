@@ -1,8 +1,10 @@
+import SliderPage from "@/components/Slider";
 
 export default function Home() {
   return (
-    <main >
-      Home page
+    <main>
+      <SliderPage />
+      <p>Home page</p>
     </main>
   );
 }
